@@ -37,7 +37,8 @@ in {
           '';
           ExecStart = "${cfg.package}/bin/p81-helper-daemon";
           ExecStop = "${cfg.package}/bin/p81-helper-daemon stop";
-          Restart = "always";
+          Restart = "on-failure";
+          TimeoutStopSec = 5;
           SyslogIdentifier = "perimeter81helper";
           User = "root";
           Group = "root";
