@@ -75,6 +75,12 @@ let
           glib
           gdk-pixbuf
 
+          # p81daemonhelper dlopens artifacts/swglib.so, which needs libz.so.1.
+          # swglib's RUNPATH only covers glibc and libgcc, so without zlib in the
+          # FHS the dlopen fails, the agent uses the NULL handle unchecked, and the
+          # helper segfaults at address 0 -- respawned by the daemon every ~2s.
+          zlib
+
           perimeter81-unwrapped
         ] ++ extraLibs pkgs;
 
