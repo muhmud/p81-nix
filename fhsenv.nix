@@ -55,6 +55,14 @@ let
           mesa
           nspr
           atk
+          # libEGL.so.1 / libGL.so.1 -- the libglvnd dispatch libraries. mesa
+          # ships only the vendor side (libEGL_mesa.so.0), so without these the
+          # Electron GUI's GL init fails outright ("Could not dlopen native
+          # EGL: libEGL.so.1"), every EGL display type fails, the GPU process
+          # exits, and under ozone-wayland the window never gets a surface --
+          # the app runs headless and invisible: it logs maybeCreateMainWindow
+          # and connects to the daemon, but the compositor never sees a window.
+          libglvnd
           dbus
           pango
           xorg.libXcomposite
