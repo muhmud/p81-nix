@@ -40,6 +40,18 @@ let
 
         targetPkgs = pkgs: with pkgs; [
           xorg.libXrandr
+
+          # p81daemonhelper execs /usr/sbin/iptables and /usr/sbin/ip6tables by
+          # ABSOLUTE path (argv[0] is the full path, so PATH cannot rescue it)
+          # to manage its Perimeter81Netfilter2 mangle chains. Without iptables
+          # in the FHS those execs fail ENOENT, the helper's shell pool never
+          # drains -- seven bare `/bin/sh` children pile up blocked in read()
+          # on empty stdin pipes -- and the helper stops answering the agent:
+          # the GUI still connects over IPC but no state ever comes back, which
+          # looks exactly like "Perimeter81 has stopped working". Restarting the
+          # service clears it until the next time. nixpkgs ships both binaries
+          # in $out/sbin, which buildFHSEnv maps onto /usr/sbin.
+          iptables
         ] ++ lib.optionals writable [ (lib.hiPrio ipWrapper) ]
           ++ extraPkgs pkgs;
 
